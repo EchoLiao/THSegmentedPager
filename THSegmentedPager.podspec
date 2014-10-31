@@ -5,9 +5,9 @@ Pod::Spec.new do |s|
   s.homepage     	= "https://github.com/hons82/THSegmentedPager"
   s.license      	= { :type => 'MIT', :file => 'LICENSE.md' }
   s.author       	= { "Hannes Tribus" => "hons82@gmail.com" }
-  s.source       	= { :git => "https://github.com/hons82/THSegmentedPager.git", :tag => "v#{s.version}" }
+  s.source       	= { :git => "." }
   s.platform     	= :ios, '6.1'
   s.requires_arc 	= true
   s.source_files 	= 'THSegmentedPager/*.{h,m}'
-  s.dependency 		'HMSegmentedControl@hons82', '~>1.3.1'
+# s.dependency 		'HMSegmentedControl' # Use 'https://github.com/EchoLiao/HMSegmentedControl.git'
 end
