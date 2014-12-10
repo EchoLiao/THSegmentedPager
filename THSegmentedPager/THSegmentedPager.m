@@ -9,8 +9,8 @@
 #import "THSegmentedPager.h"
 #import "THSegmentedPageViewControllerDelegate.h"
 
-@interface THSegmentedPager ()
-
+@interface THSegmentedPager () <UIScrollViewDelegate>
+@property (assign, nonatomic) CGPoint beginOffset;
 @end
 
 @implementation THSegmentedPager
@@ -52,9 +52,12 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+
     if ([self.pages count]>0) {
         [self setSelectedPageIndex:[self.pageControl selectedSegmentIndex] animated:animated];
     }
+
+    [self trySetupScrollDelegate];
     [self updateTitleLabels];
 }
 
@@ -164,15 +167,49 @@
     [self.pageControl setSelectedSegmentIndex:[self.pages indexOfObject:[viewController.viewControllers lastObject]] animated:YES];
 }
 
+#pragma mark - UIScrollViewDelegate
+
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
+{
+    self.beginOffset = scrollView.contentOffset;
+}
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView
+{
+    if (self.beginOffset.x != 0.0) {
+        CGPoint offset = [self.view convertPoint:scrollView.contentOffset fromView:scrollView];
+        CGFloat diff = scrollView.contentOffset.x - self.beginOffset.x;
+        if (diff < -1.0 || diff > 1.0) {
+            [self.pageControl drawSelectionIndicatorByOffsetPercent:(diff / self.beginOffset.x)];
+        }
+    }
+}
+
 #pragma mark - Callback
 
 - (void)pageControlValueChanged:(id)sender
 {
+    self.beginOffset = CGPointZero;
     UIPageViewControllerNavigationDirection direction = [self.pageControl selectedSegmentIndex] > [self.pages indexOfObject:[self.pageViewController.viewControllers lastObject]] ? UIPageViewControllerNavigationDirectionForward : UIPageViewControllerNavigationDirectionReverse;
     [self.pageViewController setViewControllers:@[[self selectedController]]
                                       direction:direction
                                        animated:YES
                                      completion:NULL];
+}
+
+#pragma mark -
+
+- (void)trySetupScrollDelegate
+{
+    for (UIView *v in self.pageViewController.view.subviews) {
+        if ([v isKindOfClass:[UIScrollView class]]) {
+            UIScrollView *scrollView = (UIScrollView *)v;
+            if (!scrollView.delegate) {
+                scrollView.delegate = self;
+            }
+            break;
+        }
+    }
 }
 
 @end
