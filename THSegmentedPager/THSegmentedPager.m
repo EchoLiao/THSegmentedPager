@@ -61,6 +61,13 @@
     [self updateTitleLabels];
 }
 
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
+{
+    if ([self.pages count] > 0) {
+        [self setSelectedPageIndex:[self.pageControl selectedSegmentIndex] animated:YES];
+    }
+}
+
 #pragma mark - Cleanup
 
 - (void)didReceiveMemoryWarning
