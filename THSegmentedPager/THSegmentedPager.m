@@ -27,6 +27,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    self.bounces = YES;
     // Init PageViewController
     self.pageViewController = [[UIPageViewController alloc] initWithTransitionStyle:UIPageViewControllerTransitionStyleScroll navigationOrientation:UIPageViewControllerNavigationOrientationHorizontal options:nil];
     self.pageViewController.view.frame = CGRectMake(0, 0, self.contentContainer.frame.size.width, self.contentContainer.frame.size.height);
@@ -211,6 +212,7 @@
     for (UIView *v in self.pageViewController.view.subviews) {
         if ([v isKindOfClass:[UIScrollView class]]) {
             UIScrollView *scrollView = (UIScrollView *)v;
+            scrollView.bounces = self.bounces;
             if (!scrollView.delegate) {
                 scrollView.delegate = self;
             }
